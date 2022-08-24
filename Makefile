@@ -7,7 +7,13 @@ endif
 BUILD_META=-build$(shell date +%Y%m%d)
 ORG ?= rancher
 # last commit on 2021-10-06
+<<<<<<< Updated upstream
 TAG ?= v3.5.1$(BUILD_META)
+=======
+TAG ?= v3.4.0$(BUILD_META)
+CREATED ?= $(shell date --iso-8601=s -u)
+REF ?= $(shell git symbolic-ref HEAD)
+>>>>>>> Stashed changes
 
 ifneq ($(DRONE_TAG),)
 TAG := $(DRONE_TAG)
@@ -20,9 +26,13 @@ endif
 .PHONY: image-build
 image-build:
 	docker build \
-		--pull \
 		--build-arg ARCH=$(ARCH) \
 		--build-arg TAG=$(TAG:$(BUILD_META)=) \
+		--build-arg BCI_IMAGE=registry.suse.com/bci/bci-base:latest \
+		--label "org.opencontainers.image.url=https://github.com/brooksn/image-build-sriov-network-device-plugin" \
+		--label "org.opencontainers.image.created=$(CREATED)" \
+		--label "org.opencontainers.image.authors=brooksn" \
+		--label "org.opencontainers.image.ref.name=$(REF)" \
 		--tag $(ORG)/hardened-sriov-network-device-plugin:$(TAG) \
 		--tag $(ORG)/hardened-sriov-network-device-plugin:$(TAG)-$(ARCH) \
 	.
